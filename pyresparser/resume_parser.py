@@ -15,7 +15,7 @@ class ResumeParserN(object):
         self,
         resume,
         skills_file=None,
-        custom_regex=None
+        custom_regex=None,
         resource_type='path'
     ):
         nlp = spacy.load('en_core_web_sm')
