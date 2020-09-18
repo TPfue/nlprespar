@@ -19,7 +19,6 @@ class ResumeParserN(object):
     ):
         nlp = spacy.load('en_core_web_sm')
         custom_nlp = spacy.load(os.path.dirname(os.path.abspath(__file__)))
-        print(__file__)
         self.__skills_file = skills_file
         self.__custom_regex = custom_regex
         self.__matcher = Matcher(nlp.vocab)
@@ -37,11 +36,16 @@ class ResumeParserN(object):
             'total_experience': None,
         }
         self.__resume = resume
+        #### BEGIN CHANGES to adapt for input directly from a text string/variable ####
         if not isinstance(self.__resume, io.BytesIO):
             ext = os.path.splitext(self.__resume)[1].split('.')[1]
+            self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+        elif isinstance(self.__resume, str):
+            self.__text_raw = self.__resume
         else:
             ext = self.__resume.name.split('.')[1]
-        self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+            self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+        #### END CHANGES to adapt for input directly from a text string/variable ####
         self.__text = ' '.join(self.__text_raw.split())
         self.__nlp = nlp(self.__text)
         self.__custom_nlp = custom_nlp(self.__text_raw)
