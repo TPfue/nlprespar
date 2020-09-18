@@ -16,6 +16,7 @@ class ResumeParserN(object):
         resume,
         skills_file=None,
         custom_regex=None
+        resource_type='path'
     ):
         nlp = spacy.load('en_core_web_sm')
         custom_nlp = spacy.load(os.path.dirname(os.path.abspath(__file__)))
@@ -37,14 +38,15 @@ class ResumeParserN(object):
         }
         self.__resume = resume
         #### BEGIN CHANGES to adapt for input directly from a text string/variable ####
-        if not isinstance(self.__resume, io.BytesIO):
-            ext = os.path.splitext(self.__resume)[1].split('.')[1]
-            self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
-        elif isinstance(self.__resume, str):
+        if resource_type == 'string':
             self.__text_raw = self.__resume
-        else:
-            ext = self.__resume.name.split('.')[1]
-            self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+        else:    
+            if not isinstance(self.__resume, io.BytesIO):
+                ext = os.path.splitext(self.__resume)[1].split('.')[1]
+                self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
+            else:
+                ext = self.__resume.name.split('.')[1]
+                self.__text_raw = utils.extract_text(self.__resume, '.' + ext)
         #### END CHANGES to adapt for input directly from a text string/variable ####
         self.__text = ' '.join(self.__text_raw.split())
         self.__nlp = nlp(self.__text)
